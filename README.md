@@ -27,7 +27,7 @@ making the IDE a first-class participant in the conversation:
 - **The agent sees what you see** — the open sketch, the selected board and port,
   connected devices, and real compiler output (not a guess).
 - **You see what the agent does** — when it writes a file, the editor opens it,
-  reloads it, and shows a *"Created by Claude"* notification. True pair
+  reloads it, and shows an *"Updated by an AI agent"* notification. True pair
   programming on hardware.
 - **It drives the real toolchain** — the same `arduino-cli`, clang-format, and
   serial monitor the IDE uses. Compile results, memory usage, and upload status
@@ -43,9 +43,6 @@ will be published after the first Open Duino release. Until then, follow
 > They share what should be shared, your sketchbook, installed boards and
 > libraries, and preferences (`~/.arduinoIDE`), but each keeps its own window
 > state and opens independently.
->
-> The upstream Arduino IDE and Open Duino can run side by side. They share the
-> sketchbook, installed boards, libraries, and preferences in `~/.arduinoIDE`.
 
 ## Quick start — connect your agent
 
