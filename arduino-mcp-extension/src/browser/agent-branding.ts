@@ -89,6 +89,9 @@ export class AgentAbout extends About {
       `CLI Version: ${cliVersion}`,
       `Based on Arduino IDE ${versionOf('arduino-ide-extension') ?? ''}`,
       '',
+      'Created by Lanuzadev',
+      'Repository: https://github.com/lanuzadev/Open-Duino',
+      '',
       'Open Duino is an independent fork of the Arduino IDE. It is not affiliated with or endorsed by Arduino SA.',
       `Arduino IDE: Copyright © ${new Date().getFullYear()} Arduino s.r.l. and/or its affiliated companies`,
     ].join('\n');

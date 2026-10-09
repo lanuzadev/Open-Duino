@@ -46,7 +46,7 @@
     "prepare": "theia download:plugins",
     "prebuild": "rimraf lib",
     "build": "theia build",
-    "prebuild:dev": "yarn prebuild",
+    "prebuild:dev": "npm run prebuild",
     "build:dev": "theia build --config webpack.dev.js --mode development",
     "test": "mocha \"./test/**/*.test.js\"",
     "start": "theia start --plugins=local-dir:../plugins",
@@ -103,7 +103,11 @@
       }
     }
   },
-  "author": "Open Duino contributors",
+  "author": "Lanuzadev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lanuzadev/Open-Duino.git"
+  },
   "description": "Open Duino: an AI-assisted Arduino development environment",
   "build": {
     "appId": "org.openduino.desktop",
@@ -152,6 +156,9 @@
       }
     ],
     "win": {
+      "icon": "resources/icon.ico",
+      "publisherName": "Lanuzadev",
+      "signAndEditExecutable": false,
       "target": [
         "msi",
         "nsis",

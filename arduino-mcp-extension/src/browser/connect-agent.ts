@@ -175,21 +175,46 @@ export class ConnectAgentContribution
   private async openOpenCodeChat(): Promise<void> {
     try {
       const sketch = this.sketchesServiceClient.tryGetCurrentSketch();
-      const cwd = CurrentSketch.isValid(sketch)
-        ? new URI(sketch.uri).parent.toString()
+      const sketchDir = CurrentSketch.isValid(sketch)
+        ? new URI(sketch.uri).parent
         : undefined;
+      const isWindows = /^win/i.test(navigator.platform);
+      const windowsCwd = sketchDir ? windowsPathFromFileUri(sketchDir.toString()) : undefined;
       const terminal = await this.terminalService.newTerminal({
         title: 'OpenCode · Open Duino',
-        cwd,
+        ...(isWindows
+          ? { shellPath: 'cmd.exe', shellArgs: ['/d', '/k'] }
+          : { cwd: sketchDir?.toString() }),
       });
       await terminal.start();
       this.terminalService.open(terminal);
-      terminal.sendText('opencode', true);
+      terminal.sendText(
+        isWindows
+          ? `cd /d "${windowsCwd ?? '%USERPROFILE%'}" && opencode\r`
+          : 'opencode\r'
+      );
     } catch (error) {
       this.messageService.error(`No se pudo iniciar OpenCode en la terminal integrada: ${String(error)}`);
     }
   }
 
+}
+
+/** OpenCode's core/instructions source recurses when Windows path casing
+ * differs from Git's project root. Start cmd explicitly and `cd /d` using the
+ * canonical uppercase drive before launching OpenCode. */
+function windowsPathFromFileUri(uri: string): string | undefined {
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(uri);
+  } catch {
+    return undefined;
+  }
+  const match = decoded.match(/^file:\/\/\/([a-z]):\/(.*)$/i);
+  if (!match) {
+    return undefined;
+  }
+  return `${match[1].toUpperCase()}:\\${match[2].replace(/\//g, '\\')}`;
 }
 
 class ConnectAgentDialog extends AbstractDialog<void> {

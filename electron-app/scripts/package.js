@@ -51,6 +51,7 @@ async function run() {
     //   updateChannel
     // );
   }
+  args.push(...process.argv.slice(2));
   const cp = exec('electron-builder', args, { stdio: 'inherit' });
   await cp;
 }
