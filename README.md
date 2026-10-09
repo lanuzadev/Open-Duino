@@ -1,10 +1,8 @@
-<img src="static/screenshot.png" align="right" width="380" />
+# Open Duino
 
-# Arduino Agent
-
-**The AI-native Arduino IDE.** Arduino Agent is a full Arduino IDE 2.x with a
+**The AI-native Arduino IDE.** Open Duino is a full Arduino IDE 2.x with a
 Model Context Protocol (MCP) server built into its core — so an AI agent like
-Claude can write sketches, compile them, upload to real boards, read the serial
+OpenCode can write sketches, compile them, upload to real boards, read the serial
 monitor, and manage libraries *alongside you*, editing the same files you see in
 the editor in real time.
 
@@ -23,7 +21,7 @@ AGPL-3.0</sub>
 
 The Arduino IDE is where embedded projects get built. Modern AI agents are great
 at embedded code — but they work blind, guessing at your board, your errors, and
-your wiring, and handing you snippets to paste. Arduino Agent closes that gap by
+your wiring, and handing you snippets to paste. Open Duino closes that gap by
 making the IDE a first-class participant in the conversation:
 
 - **The agent sees what you see** — the open sketch, the selected board and port,
@@ -37,49 +35,35 @@ making the IDE a first-class participant in the conversation:
 
 ## Download
 
-Unsigned development builds of the **[latest release](https://github.com/mixelpixx/Arduino-Agent/releases/latest)** — these links always point at the newest version:
-
-- [**Windows x64**](https://github.com/mixelpixx/Arduino-Agent/releases/latest/download/arduino-agent-windows.zip)
-- [**macOS**](https://github.com/mixelpixx/Arduino-Agent/releases/latest/download/arduino-agent-macos.zip)
-- [**Linux x64**](https://github.com/mixelpixx/Arduino-Agent/releases/latest/download/arduino-agent-linux.zip)
-
-Unzip and run **Arduino Agent** (`Arduino Agent.exe` on Windows,
-`Arduino Agent.app` on macOS, `arduino-agent` on Linux). Arduino Agent doesn't
-check Arduino's update server; get new versions here. Release notes and older
-builds are on the [Releases](https://github.com/mixelpixx/Arduino-Agent/releases)
-page.
+Open Duino is being developed from this source checkout. Packaged downloads
+will be published after the first Open Duino release. Until then, follow
+[Building from source](#building-from-source).
 
 > **Got the official Arduino IDE too?** They run side by side as separate apps.
 > They share what should be shared, your sketchbook, installed boards and
 > libraries, and preferences (`~/.arduinoIDE`), but each keeps its own window
 > state and opens independently.
 >
-> **Upgrading from 0.6.x?** The executable was called `Arduino IDE` before 0.7.0.
-> Your window layout and per-sketch board selections carry over on first launch,
-> and an MCP config whose `ARDUINO_AGENT_PATH` still names `Arduino IDE.exe`
-> keeps working (the bridge finds the renamed executable), but update it when
-> convenient.
-
-> These are unsigned dev builds. On macOS you may need to allow the app under
-> **System Settings → Privacy & Security**; on Windows, dismiss SmartScreen with
-> **More info → Run anyway**. Prefer to build it yourself? See
-> [Building from source](#building-from-source).
+> The upstream Arduino IDE and Open Duino can run side by side. They share the
+> sketchbook, installed boards, libraries, and preferences in `~/.arduinoIDE`.
 
 ## Quick start — connect your agent
 
-1. **Launch Arduino Agent.** The MCP server starts automatically on
+1. **Launch Open Duino.** The MCP server starts automatically on
    `http://127.0.0.1:3847`. The status bar (bottom left) shows **MCP ready**,
    and **Agent active** once an assistant is using it.
 
 2. **Help › Connect an AI Agent…** (or click that status bar item). It gives
    you copy-ready setups with your installation's real paths already filled in:
+   - **OpenCode**: one `opencode mcp add` command to paste into a terminal,
+     plus a configuration entry for manual setup.
    - **Claude Code**: one `claude mcp add` command to paste into a terminal.
    - **Claude Desktop, Cursor and other MCP clients**: an `mcpServers` entry
      for the client's config file.
    - **Direct HTTP**: for clients that speak Streamable HTTP, with your token.
 
-   The first two go through the bundled stdio bridge, so the client stays
-   connected while Arduino Agent is closed and starts it when a tool needs it
+   The OpenCode and Claude Code commands use the bundled stdio bridge, so the client stays
+   connected while Open Duino is closed and starts it when a tool needs it
    (needs Node.js 18 or newer).
 
    <details>
@@ -92,22 +76,26 @@ page.
      "mcpServers": {
        "arduino": {
          "command": "node",
-         "args": ["C:/path/to/Arduino Agent/resources/mcp-bridge/bridge/arduino-agent-bridge.js"],
-         "env": { "ARDUINO_AGENT_PATH": "C:/path/to/Arduino Agent/Arduino Agent.exe" }
+         "args": ["C:/path/to/Open Duino/resources/mcp-bridge/bridge/arduino-agent-bridge.js"],
+         "env": { "ARDUINO_AGENT_PATH": "C:/path/to/Open Duino/Open Duino.exe" }
        }
      }
    }
    ```
 
    On macOS the bridge is at
-   `Arduino Agent.app/Contents/Resources/mcp-bridge/bridge/arduino-agent-bridge.js`;
+   `Open Duino.app/Contents/Resources/mcp-bridge/bridge/arduino-agent-bridge.js`;
    on Linux, under `resources/` in the unzipped folder. From a source checkout,
    use `arduino-mcp-extension/bridge/arduino-agent-bridge.js` after building the
    extension. The bridge reads the token from `~/.arduinoIDE/mcp-token` itself
    and has no dependencies; see [the bridge README](arduino-mcp-extension/bridge/README.md)
    for its options.
 
-   Direct HTTP (only connects while Arduino Agent is running):
+   OpenCode's generated local config uses `mcp.servers.open-duino` with a
+   `node` command pointing at the bundled bridge. Use the generated command or
+   config in **Help › Connect an AI Agent…**; Node.js 18 or newer is required.
+
+   Direct HTTP (only connects while Open Duino is running):
 
    ```json
    {
@@ -129,7 +117,13 @@ page.
    > skill: copy [`skills/arduino-agent/`](skills/arduino-agent/) into
    > `~/.claude/skills/`.
 
-3. **Talk to your board.**
+3. **Open the in-app agent.** Choose **Help › OpenCode Chat** to open OpenCode's
+   TUI in Open Duino's integrated terminal, alongside the sketch editor. It uses
+   the current sketch folder as its workspace, and edits appear in the editor
+   as they are written. Connect the bridge in step 2 first and configure an
+   OpenCode provider if you have not already.
+
+4. **Talk to your board.**
    - *"Create a Blink sketch and open it."*
    - *"What boards are connected?"*
    - *"Compile for the Uno and explain any errors."*
@@ -157,7 +151,7 @@ its context. A **direct mode** exposes all tools individually if you prefer.
 
 ```
 +------------------+     HTTP (Bearer auth)     +---------------------------+
-|    AI agent      | <------------------------> |      Arduino Agent        |
+|    AI agent      | <------------------------> |       Open Duino          |
 |  (MCP client)    |   http://127.0.0.1:3847    |  (Theia/Electron + MCP)    |
 +------------------+           /mcp             +------------------------------+
                                                       |
@@ -199,7 +193,7 @@ curl http://127.0.0.1:3847/health
 
 ## Made for learning, too
 
-Arduino Agent ships extras aimed at STEM and classroom use:
+Open Duino ships extras aimed at STEM and classroom use:
 
 - **Example browser** — every built-in Arduino example, with descriptions.
 - **Hardware reference** — ask for a board's pin map, PWM/I2C/SPI pins, memory.
@@ -215,8 +209,8 @@ progress bars, and serial monitor) that respects both light and dark themes.
 a C/C++ toolchain (VS 2022 Build Tools on Windows).
 
 ```bash
-git clone https://github.com/mixelpixx/arduino-mcp.git
-cd arduino-mcp
+git clone https://github.com/lanuzadev/Open-Duino.git
+cd Open-Duino
 
 corepack enable
 yarn install
@@ -233,8 +227,9 @@ documentation lives in
 
 ## Project status
 
-Actively developed, and **verified against real hardware** — an ESP32-S3
-(N16R8) driven end to end through the MCP tools alone:
+Open Duino inherits an MCP workflow previously verified against real hardware
+by its upstream project — an ESP32-S3 (N16R8) driven end to end through the MCP
+tools alone. This fork's branded build has not yet been packaged or revalidated:
 
 > install the board core → create a sketch → write the code → compile →
 > upload → read the board's own serial output
@@ -251,8 +246,9 @@ boards arduino-cli can't. The server also now teaches connected agents its own
 workflow (instructions at connect, `/bringup`-style prompts, a Claude Code
 skill).
 
-Release builds for **Windows, macOS and Linux** are produced by CI and attached
-to every tagged release.
+The release workflow is configured to build **Windows, macOS and Linux**
+archives for Open Duino tags. Packaged downloads will be published after the
+first release.
 
 **Known limits:** artifacts are unsigned. Boards whose USB VID/PID appear in no
 `boards.txt` (many ESP32-S3 devkits) can't be auto-identified — use
@@ -260,19 +256,19 @@ to every tagged release.
 board's *native* USB port can require manual bootloader entry; a UART bridge
 port works without it.
 
-Contributions and bug reports are welcome via
-[Issues](https://github.com/mixelpixx/arduino-mcp/issues) and pull requests.
+Contributions and bug reports are welcome through this repository's issue
+tracker and pull requests.
 
 ## Relationship to the Arduino IDE
 
-Arduino Agent is a fork of the open-source
+Open Duino is a fork of the open-source
 **[Arduino IDE 2.x](https://github.com/arduino/arduino-ide)** (a
 [Theia](https://theia-ide.org/)/[Electron](https://www.electronjs.org/)
 application that drives the [arduino-cli](https://github.com/arduino/arduino-cli)).
 All of the core IDE work is theirs; this project adds the embedded MCP server,
 the AI-collaboration features, and the UI refinements on top.
 
-**Arduino® is a trademark of Arduino SA.** Arduino Agent is an independent,
+**Arduino® is a trademark of Arduino SA.** Open Duino is an independent,
 community project and is **not affiliated with, sponsored by, or endorsed by
 Arduino SA.** The name describes this project's purpose — an agent-driven Arduino
 development environment — and implies no official connection.

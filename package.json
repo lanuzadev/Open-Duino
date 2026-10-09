@@ -1,9 +1,9 @@
 {
-  "name": "arduino-ide",
+  "name": "open-duino",
   "version": "2.3.10",
-  "description": "Arduino IDE",
-  "repository": "https://github.com/arduino/arduino-ide.git",
-  "author": "Arduino SA",
+  "description": "Open Duino: an AI-assisted Arduino development environment",
+  "repository": "https://github.com/lanuzadev/Open-Duino.git",
+  "author": "Open Duino contributors",
   "license": "AGPL-3.0-or-later",
   "private": true,
   "packageManager": "yarn@4.5.3",
